@@ -3,6 +3,7 @@
     <div class="hero">
       <h1 contenteditable="">Welcome to Vue SSR</h1>
       <p>A modern Vue.js application with Server Side Rendering</p>
+      <pre>{{ users }}</pre>
     </div>
 
     <div class="counter-card">
@@ -18,8 +19,40 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts">
+// Option 1: Define as a static property on the component
+export const asyncData = async () => {
+  console.log("xxx Home page");
+
+  const { fetchData, items, loading, error } = useUsers();
+  await fetchData();
+
+  return { items, loading, error };
+};
+
+// Alternatively, use a runtime approach
+// defineExpose({
+//   asyncData,
+// });
+</script>
+
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { useCounterStore } from "../stores/counter";
+import { useUsers } from "../api/users";
+
+const { items: users, fetchData } = useUsers();
+// const users = ref([]);
+
+onMounted(() => {
+  fetchData();
+});
+
+// onMounted(async () => {
+//   const resp = await fetch("https://jsonplaceholder.typicode.com/users");
+//   users.value = await resp.json();
+//   console.log(users);
+// });
 
 const counter = useCounterStore();
 </script>

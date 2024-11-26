@@ -65,8 +65,6 @@ async function createServer() {
         pinia,
       } = await render(url, manifest);
 
-      console.log(preloadLinks);
-
       const html = template
         .replace("<!--preload-links-->", `${preloadLinks}\n${cssLinks}`)
         .replace(`<!--app-html-->`, appHtml)

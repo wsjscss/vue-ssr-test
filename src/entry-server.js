@@ -7,10 +7,29 @@ export async function render(url, manifest) {
   await router.push(url);
   await router.isReady();
 
+  // Collect and run asyncData for matched routes
+  const matchedComponents = router.currentRoute.value.matched;
+
+  // Fetch async data for SSR
+  const asyncDataPromises = matchedComponents
+    .map((route) => {
+      const component = route.components?.default;
+      console.log(component);
+      console.log(component.asyncData);
+
+      return component?.asyncData
+        ? component.asyncData({
+            route: router.currentRoute.value,
+          })
+        : null;
+    })
+    .filter(Boolean);
+
+  // Wait for all async data to be fetched
+  await Promise.all(asyncDataPromises);
+
   const ctx = {};
   const html = await renderToString(app, ctx);
-
-  console.log("---->", ctx.modules);
 
   // Get styles from SSR context
   let preloadLinks = [];

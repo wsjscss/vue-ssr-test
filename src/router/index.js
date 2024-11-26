@@ -3,9 +3,13 @@ import Home from "../pages/Home.vue";
 
 export const routes = [
   {
-    path: "/",
+    path: "/home",
     name: "Home",
-    component: Home,
+    component: () => {
+      console.log("yyy", Home);
+
+      return import("../pages/Home.vue");
+    },
   },
   {
     path: "/about",
